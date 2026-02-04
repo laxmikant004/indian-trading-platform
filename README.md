@@ -1,191 +1,210 @@
-# Indian Trading Platform – Mini Project
+# Indian Trading Platform (Mini Project)
 
-This project is developed as a **college mini project** using the **Scrum methodology**.  
-The goal of the project is to build a basic Indian Trading Platform with user authentication and further trading-related features.
+## 📌 Project Overview
+This is a **Mini Project** developed for college submission using **Scrum methodology**.  
+The project focuses on building the backend authentication system for an **Indian Trading Platform**.
 
----
-
-## 📌 Tech Stack
-
-- **Frontend:** React.js  
-- **Backend:** Node.js, Express.js  
-- **Database:** PostgreSQL  
-- **Version Control:** Git & GitHub  
+Currently completed up to **Sprint 1**.
 
 ---
 
-## 📂 Project Structure
+## 🛠 Tech Stack
+### Backend
+- Node.js
+- Express.js
+- PostgreSQL
+- JWT (Authentication)
+- bcrypt (Password Hashing)
 
+### Frontend (Planned)
+- React.js
+
+### Tools
+- Git & GitHub
+- Postman
+- Nodemon
+
+---
+
+## 📂 Project Structure (Server)
 ```
-indian-trading-platform/
+server/
+│── controllers/
+│   └── authController.js
 │
-├── client/        # React frontend
-├── server/        # Node.js backend
-├── .gitignore
-└── README.md
+│── routes/
+│   └── authRoutes.js
+│
+│── config/
+│   └── db.js
+│
+│── index.js
+│── package.json
+│── .env (ignored)
+```
+
+---
+
+## ✅ Sprint 1 Goals
+- Project setup
+- GitHub repository creation
+- User authentication system
+  - Register API
+  - Login API with JWT
+
+Sprint 1 has been **successfully completed**.
+
+---
+
+## 🔐 Authentication APIs
+
+### 1️⃣ Register User
+**Endpoint**
+```
+POST /api/auth/register
+```
+
+**Request Body**
+```json
+{
+  "name": "laxmikant",
+  "email": "laxmikant@gmail.com",
+  "password": "123456"
+}
+```
+
+**Response**
+```json
+{
+  "message": "User registered successfully"
+}
+```
+
+---
+
+### 2️⃣ Login User
+**Endpoint**
+```
+POST /api/auth/login
+```
+
+**Request Body**
+```json
+{
+  "email": "laxmikant@gmail.com",
+  "password": "123456"
+}
+```
+
+**Response**
+```json
+{
+  "message": "Login successful",
+  "token": "JWT_TOKEN"
+}
 ```
 
 ---
 
 ## ⚙️ Setup Instructions
 
-## 🐧 Setup on Linux (Ubuntu)
-
-### 1️⃣ Install Required Software
-```bash
-sudo apt update
-sudo apt install nodejs npm postgresql git -y
-```
-
-Verify installation:
-```bash
-node -v
-npm -v
-psql --version
-```
+### 🔹 Prerequisites
+- Node.js (v18+ recommended)
+- PostgreSQL
+- Git
 
 ---
 
-### 2️⃣ Clone the Repository
+### 🔹 Linux Setup
 ```bash
-git clone https://github.com/<your-username>/indian-trading-platform.git
-cd indian-trading-platform
-```
-
----
-
-### 3️⃣ Backend Setup
-```bash
-cd server
+git clone https://github.com/your-username/indian-trading-platform.git
+cd indian-trading-platform/server
 npm install
 ```
 
-Create a `.env` file inside the `server` folder:
+Create `.env` file:
 ```env
+PORT=5000
 DB_USER=postgres
-DB_PASSWORD=your_postgres_password
-DB_NAME=trading_platform
+DB_PASSWORD=your_password
 DB_HOST=localhost
+DB_NAME=trading_db
 JWT_SECRET=your_secret_key
+```
+
+Run server:
+```bash
+npx nodemon index.js
 ```
 
 ---
 
-### 4️⃣ PostgreSQL Database Setup
-```bash
-sudo -u postgres psql
+### 🔹 Windows Setup
+```cmd
+git clone https://github.com/your-username/indian-trading-platform.git
+cd indian-trading-platform\server
+npm install
 ```
 
-```sql
-CREATE DATABASE trading_platform;
-\c trading_platform;
+Create `.env` file (same as Linux)
 
+Run server:
+```cmd
+npx nodemon index.js
+```
+
+---
+
+## 🗄 Database Schema
+```sql
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(100),
   email VARCHAR(100) UNIQUE NOT NULL,
-  password TEXT NOT NULL,
-  role VARCHAR(10) DEFAULT 'USER',
+  password VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-Exit PostgreSQL:
-```sql
-\q
-```
-
 ---
 
-### 5️⃣ Run Backend Server
-```bash
-npx nodemon index.js
-```
-
-Server will run at:
-```
-http://localhost:5000
-```
-
----
-
-## 🪟 Setup on Windows
-
-### 1️⃣ Install Required Software
-- Node.js (LTS): https://nodejs.org  
-- PostgreSQL: https://www.postgresql.org/download/windows/  
-- Git: https://git-scm.com/downloads  
-
----
-
-### 2️⃣ Clone the Repository
-Open **Git Bash**:
-```bash
-git clone https://github.com/<your-username>/indian-trading-platform.git
-cd indian-trading-platform
-```
-
----
-
-### 3️⃣ Backend Setup
-```bash
-cd server
-npm install
-```
-
-Create `.env` file inside `server`:
-```env
-DB_USER=postgres
-DB_PASSWORD=your_postgres_password
-DB_NAME=trading_platform
-DB_HOST=localhost
-JWT_SECRET=your_secret_key
-```
-
----
-
-### 4️⃣ PostgreSQL Setup
-Use **pgAdmin** or **SQL Shell** to create the database and table (same as Linux setup).
-
----
-
-### 5️⃣ Run Backend Server
-```bash
-npx nodemon index.js
-```
-
----
-
-## 🔐 Features Implemented (Sprint 1)
-
-- Project setup with GitHub
-- Backend using Node.js and Express
-- PostgreSQL database integration
-- User Registration API
-- Password hashing using bcrypt
-- Proper error handling
-
----
-
-## 👥 How to Contribute (Team Collaboration)
-
-1. Clone the repository
+## 🤝 Contribution Guidelines
+1. Fork the repository
 2. Create a new branch
-3. Commit changes
-4. Push branch
-5. Create Pull Request
+   ```bash
+   git checkout -b feature-name
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m "Added new feature"
+   ```
+4. Push to your branch
+   ```bash
+   git push origin feature-name
+   ```
+5. Create a Pull Request
 
 ---
 
-## 🚀 Future Enhancements
-
-- Login API with JWT authentication
-- Trading dashboard
-- Portfolio management
+## 📘 Scrum Details
+- Sprint Duration: 1 Week
+- Sprint 1 Focus: Authentication Module
+- Sprint Outcome: Secure login & registration system
 
 ---
 
-## 👨‍💻 Project For
+## 👨‍🎓 Academic Use
+This project is created for **educational purposes** and college evaluation.
 
-College Mini Project  
-Department of Computer Science / Information Technology
+---
+
+## 🚀 Next Sprint (Planned)
+- JWT Middleware (Protected routes)
+- Trading APIs (Buy / Sell simulation)
+- Wallet balance
+- Order history
+
+---
+
+## 📄 License
+This project is for academic use only.
