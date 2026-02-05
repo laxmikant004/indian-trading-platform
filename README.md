@@ -1,10 +1,10 @@
 # Indian Trading Platform (Mini Project)
 
 ## 📌 Project Overview
-This is a **Mini Project** developed for college submission using **Scrum methodology**.  
-The project focuses on building the backend authentication system for an **Indian Trading Platform**.
+This is a **Mini Project** developed for college submission using **Scrum methodology**.
+The project focuses on building a **full-stack authentication system** for an **Indian Trading Platform** using React and Node.js.
 
-Currently completed up to **Sprint 1**.
+Currently completed up to **Sprint 2 (Authentication – Backend + Frontend)**.
 
 ---
 
@@ -16,8 +16,11 @@ Currently completed up to **Sprint 1**.
 - JWT (Authentication)
 - bcrypt (Password Hashing)
 
-### Frontend (Planned)
+### Frontend
 - React.js
+- React Router DOM
+- Bootstrap
+- Axios
 
 ### Tools
 - Git & GitHub
@@ -26,33 +29,34 @@ Currently completed up to **Sprint 1**.
 
 ---
 
-## 📂 Project Structure (Server)
+## 📂 Project Structure
 ```
-server/
-│── controllers/
-│   └── authController.js
-│
-│── routes/
-│   └── authRoutes.js
-│
-│── config/
-│   └── db.js
-│
-│── index.js
-│── package.json
-│── .env (ignored)
+indian-trading-platform/
+├── client/        # React frontend
+├── server/        # Node.js backend
+└── README.md
 ```
 
 ---
 
-## ✅ Sprint 1 Goals
+## ✅ Sprint Progress
+
+### Sprint 1
 - Project setup
 - GitHub repository creation
-- User authentication system
+- Backend authentication
   - Register API
   - Login API with JWT
 
-Sprint 1 has been **successfully completed**.
+### Sprint 2
+- Frontend setup (React)
+- Login page
+- Register page
+- Dashboard page
+- JWT handling in frontend
+- Logout functionality
+
+Sprint 1 & 2 have been **successfully completed**.
 
 ---
 
@@ -67,7 +71,7 @@ POST /api/auth/register
 **Request Body**
 ```json
 {
-  "name": "laxmikant",
+  "username": "laxmikant",
   "email": "laxmikant@gmail.com",
   "password": "123456"
 }
@@ -115,7 +119,7 @@ POST /api/auth/login
 
 ---
 
-### 🔹 Linux Setup
+### 🔹 Linux / macOS Setup
 ```bash
 git clone https://github.com/your-username/indian-trading-platform.git
 cd indian-trading-platform/server
@@ -132,9 +136,16 @@ DB_NAME=trading_db
 JWT_SECRET=your_secret_key
 ```
 
-Run server:
+Run backend:
 ```bash
 npx nodemon index.js
+```
+
+Run frontend:
+```bash
+cd ../client
+npm install
+npm start
 ```
 
 ---
@@ -148,9 +159,16 @@ npm install
 
 Create `.env` file (same as Linux)
 
-Run server:
+Run backend:
 ```cmd
 npx nodemon index.js
+```
+
+Run frontend:
+```cmd
+cd ..\client
+npm install
+npm start
 ```
 
 ---
@@ -159,7 +177,7 @@ npx nodemon index.js
 ```sql
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(100),
+  username VARCHAR(100) NOT NULL,
   email VARCHAR(100) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -188,23 +206,26 @@ CREATE TABLE users (
 
 ## 📘 Scrum Details
 - Sprint Duration: 1 Week
-- Sprint 1 Focus: Authentication Module
-- Sprint Outcome: Secure login & registration system
+- Sprint 1 Focus: Backend Authentication
+- Sprint 2 Focus: Frontend Authentication
 
 ---
 
-## 👨‍🎓 Academic Use
-This project is created for **educational purposes** and college evaluation.
+## 🎓 Academic Use
+This project is created for **educational purposes only**.
 
 ---
 
 ## 🚀 Next Sprint (Planned)
-- JWT Middleware (Protected routes)
+- Protected routes middleware
+- Role-based access (User/Admin)
 - Trading APIs (Buy / Sell simulation)
 - Wallet balance
 - Order history
 
 ---
 
-## 📄 License
-This project is for academic use only.
+## 👨‍💻 Author
+**Laxmikant**  
+Indian Trading Platform – Mini Project
+
