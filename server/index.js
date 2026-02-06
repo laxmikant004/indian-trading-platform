@@ -3,9 +3,15 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-app.use(cors());
+
+// ✅ MIDDLEWARE FIRST
+app.use(cors({
+  origin: "http://localhost:3000"
+}));
 app.use(express.json());
 
+// ✅ ROUTES AFTER
+app.use("/api/market", require("./routes/marketRoutes"));
 app.use("/api/auth", require("./routes/authRoutes"));
 
 const PORT = process.env.PORT || 5000;
