@@ -2,148 +2,76 @@
 
 ## 📌 Project Overview
 This is a **Mini Project** developed for college submission using **Scrum methodology**.
-The project focuses on building a **full-stack authentication system** for an **Indian Trading Platform** using React and Node.js.
 
-Currently completed up to **Sprint 2 (Authentication – Backend + Frontend)**.
+The project is a **full‑stack Indian Trading Platform** that includes:
+- User Authentication (Register / Login / Logout)
+- Market Dashboard with **NSE & BSE live data** using **Yahoo Finance API**
+- React frontend + Node.js backend
+
+Current status: **Sprint 1 completed + Market Dashboard implemented**
 
 ---
 
 ## 🛠 Tech Stack
+
 ### Backend
 - Node.js
 - Express.js
 - PostgreSQL
-- JWT (Authentication)
-- bcrypt (Password Hashing)
+- JWT Authentication
+- bcrypt
+- yahoo-finance2 API
+- CORS
 
 ### Frontend
 - React.js
 - React Router DOM
-- Bootstrap
 - Axios
-
-### Tools
-- Git & GitHub
-- Postman
-- Nodemon
+- Bootstrap
 
 ---
 
 ## 📂 Project Structure
 ```
 indian-trading-platform/
-├── client/        # React frontend
-├── server/        # Node.js backend
+├── client/
+├── server/
+│   ├── controllers/
+│   ├── routes/
+│   └── index.js
 └── README.md
 ```
 
 ---
 
-## ✅ Sprint Progress
-
-### Sprint 1
-- Project setup
-- GitHub repository creation
-- Backend authentication
-  - Register API
-  - Login API with JWT
-
-### Sprint 2
-- Frontend setup (React)
-- Login page
-- Register page
-- Dashboard page
-- JWT handling in frontend
-- Logout functionality
-
-Sprint 1 & 2 have been **successfully completed**.
+## ✅ Completed Features
+- User Registration
+- User Login
+- Logout
+- Market Dashboard
+- NSE & BSE data (Yahoo Finance)
 
 ---
 
-## 🔐 Authentication APIs
-
-### 1️⃣ Register User
-**Endpoint**
-```
-POST /api/auth/register
-```
-
-**Request Body**
-```json
-{
-  "username": "laxmikant",
-  "email": "laxmikant@gmail.com",
-  "password": "123456"
-}
-```
-
-**Response**
-```json
-{
-  "message": "User registered successfully"
-}
-```
-
----
-
-### 2️⃣ Login User
-**Endpoint**
-```
-POST /api/auth/login
-```
-
-**Request Body**
-```json
-{
-  "email": "laxmikant@gmail.com",
-  "password": "123456"
-}
-```
-
-**Response**
-```json
-{
-  "message": "Login successful",
-  "token": "JWT_TOKEN"
-}
-```
+## 📈 API Endpoints
+- POST /api/auth/register
+- POST /api/auth/login
+- GET /api/market
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### 🔹 Prerequisites
-- Node.js (v18+ recommended)
-- PostgreSQL
-- Git
-
----
-
-### 🔹 Linux / macOS Setup
+### Backend
 ```bash
-git clone https://github.com/your-username/indian-trading-platform.git
-cd indian-trading-platform/server
+cd server
 npm install
-```
-
-Create `.env` file:
-```env
-PORT=5000
-DB_USER=postgres
-DB_PASSWORD=your_password
-DB_HOST=localhost
-DB_NAME=trading_db
-JWT_SECRET=your_secret_key
-```
-
-Run backend:
-```bash
 npx nodemon index.js
 ```
 
-Run frontend:
+### Frontend
 ```bash
-cd ../client
+cd client
 npm install
 npm start
 ```
@@ -208,24 +136,15 @@ CREATE TABLE users (
 - Sprint Duration: 1 Week
 - Sprint 1 Focus: Backend Authentication
 - Sprint 2 Focus: Frontend Authentication
+## 🤝 Contribution
+Fork the repo → Create branch → Commit → Push → PR
 
 ---
 
 ## 🎓 Academic Use
-This project is created for **educational purposes only**.
-
----
-
-## 🚀 Next Sprint (Planned)
-- Protected routes middleware
-- Role-based access (User/Admin)
-- Trading APIs (Buy / Sell simulation)
-- Wallet balance
-- Order history
+This project is for **educational purposes only**.
 
 ---
 
 ## 👨‍💻 Author
-**Laxmikant**  
-Indian Trading Platform – Mini Project
-
+Laxmikant
