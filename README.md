@@ -1,18 +1,26 @@
-# Indian Trading Platform (Mini Project)
+# 🇮🇳 Indian Trading Platform (Mini Project)
 
 ## 📌 Project Overview
-This is a **Mini Project** developed for college submission using **Scrum methodology**.
+This is a **college mini project** developed using the **Scrum methodology**.
 
-The project is a **full‑stack Indian Trading Platform** that includes:
-- User Authentication (Register / Login / Logout)
-- Market Dashboard with **NSE & BSE live data** using **Yahoo Finance API**
-- React frontend + Node.js backend
+The project is a **full-stack Indian Trading Platform** that allows users to:
+- Register & Login securely
+- View Indian stock market data (NSE & BSE)
+- Logout securely using JWT token handling
 
-Current status: **Sprint 1 completed + Market Dashboard implemented**
+📍 **Current Status:**  
+✅ Sprint 1 completed  
+✅ Market Dashboard implemented
 
 ---
 
 ## 🛠 Tech Stack
+
+### Frontend
+- React.js
+- React Router DOM
+- Axios
+- Bootstrap
 
 ### Backend
 - Node.js
@@ -23,128 +31,78 @@ Current status: **Sprint 1 completed + Market Dashboard implemented**
 - yahoo-finance2 API
 - CORS
 
-### Frontend
-- React.js
-- React Router DOM
-- Axios
-- Bootstrap
-
 ---
 
 ## 📂 Project Structure
+
 ```
 indian-trading-platform/
 ├── client/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   └── services/
+│   └── package.json
+│
 ├── server/
 │   ├── controllers/
 │   ├── routes/
+│   ├── middleware/
+│   ├── config/
 │   └── index.js
+│
 └── README.md
 ```
 
 ---
 
-## ✅ Completed Features
+## ✅ Completed Features (Sprint 1)
+
 - User Registration
-- User Login
-- Logout
+- User Login (JWT based)
+- Logout (clears token from localStorage)
 - Market Dashboard
-- NSE & BSE data (Yahoo Finance)
+- Live NSE & BSE data using Yahoo Finance API
 
 ---
 
-## 📈 API Endpoints
-- POST /api/auth/register
-- POST /api/auth/login
-- GET /api/market
+## 📊 Market Dashboard
+
+Displays real-time Indian market data with color-coded gains and losses.
+
+---
+
+## 🔐 Authentication Flow
+
+1. User registers → password hashed
+2. User logs in → JWT token generated
+3. Token stored in localStorage
+4. Token auto-attached to requests
+5. Logout clears token
+
+---
+
+## 🌐 API Endpoints
+
+- POST `/api/auth/register`
+- POST `/api/auth/login`
+- GET `/api/market`
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### Backend
 ```bash
-cd server
-npm install
-npx nodemon index.js
-```
-
-### Frontend
-```bash
-cd client
-npm install
-npm start
+git clone https://github.com/laxmikant004/indian-trading-platform.git
+cd indian-trading-platform
 ```
 
 ---
 
-### 🔹 Windows Setup
-```cmd
-git clone https://github.com/your-username/indian-trading-platform.git
-cd indian-trading-platform\server
-npm install
-```
-
-Create `.env` file (same as Linux)
-
-Run backend:
-```cmd
-npx nodemon index.js
-```
-
-Run frontend:
-```cmd
-cd ..\client
-npm install
-npm start
-```
-
----
-
-## 🗄 Database Schema
-```sql
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
----
-
-## 🤝 Contribution Guidelines
-1. Fork the repository
-2. Create a new branch
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes
-   ```bash
-   git commit -m "Added new feature"
-   ```
-4. Push to your branch
-   ```bash
-   git push origin feature-name
-   ```
-5. Create a Pull Request
-
----
-
-## 📘 Scrum Details
-- Sprint Duration: 1 Week
-- Sprint 1 Focus: Backend Authentication
-- Sprint 2 Focus: Frontend Authentication
-## 🤝 Contribution
-Fork the repo → Create branch → Commit → Push → PR
-
----
-
-## 🎓 Academic Use
-This project is for **educational purposes only**.
+## 🎓 Academic Note
+For educational use only.
 
 ---
 
 ## 👨‍💻 Author
-Laxmikant
+**Laxmikant**

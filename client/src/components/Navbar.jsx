@@ -6,47 +6,38 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
     navigate("/login");
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div className="container">
-        <Link className="navbar-brand" to="/">
-          Indian Trading Platform
-        </Link>
+    <nav className="navbar navbar-dark bg-dark px-3">
+      <Link className="navbar-brand" to="/">
+        Indian Trading Platform
+      </Link>
 
-        <ul className="navbar-nav ms-auto">
-          <li className="nav-item">
-            <Link className="nav-link" to="/">Home</Link>
-          </li>
-
-          {!token ? (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" to="/login">Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/register">Register</Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard">Dashboard</Link>
-              </li>
-              <li className="nav-item">
-                <button
-                  className="btn btn-danger btn-sm ms-2"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
+      <div>
+        {token ? (
+          <>
+            <Link className="btn btn-outline-light me-2" to="/dashboard">
+              Dashboard
+            </Link>
+            <button
+              className="btn btn-danger"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link className="btn btn-outline-light me-2" to="/login">
+              Login
+            </Link>
+            <Link className="btn btn-outline-light" to="/register">
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );
