@@ -21,10 +21,16 @@ const Navbar = () => {
             <Link className="btn btn-outline-light me-2" to="/dashboard">
               Dashboard
             </Link>
-            <button
-              className="btn btn-danger"
-              onClick={handleLogout}
-            >
+
+            <Link className="btn btn-outline-light me-2" to="/profile">
+              Profile
+            </Link>
+	    
+            <Link className="btn btn-outline-light me-2" to="/watchlist">
+             Watchlist
+            </Link>
+	  
+            <button className="btn btn-danger" onClick={handleLogout}>
               Logout
             </button>
           </>

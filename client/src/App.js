@@ -4,7 +4,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./routes/PrivateRoute";
 import Navbar from "./components/Navbar";
-
+import Profile from "./pages/Profile";
+import Watchlist from "./pages/Watchlist";
 function App() {
   return (
     <Router>
@@ -12,7 +13,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+	<Route path="/profile" element={<Profile />} />
+	<Route path="/watchlist" element={<Watchlist />} />
         {/* Protected Route */}
         <Route
           path="/dashboard"
