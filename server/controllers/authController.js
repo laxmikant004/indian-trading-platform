@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
 
     const userExists = await pool.query(
       "SELECT id FROM users WHERE email = $1",
-      [email]
+      [email],
     );
 
     if (userExists.rows.length > 0) {
@@ -24,14 +24,16 @@ exports.register = async (req, res) => {
 
     const newUser = await pool.query(
       "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
-      [name, email, hashedPassword]
+      [name, email, hashedPassword],
     );
 
     res.status(201).json({
       message: "User registered successfully",
       user: newUser.rows[0],
     });
-
+    await pool.query("INSERT INTO portfolios (user_id) VALUES ($1)", [
+      newUser.rows[0].id,
+    ]);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -47,10 +49,9 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const result = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ message: "Invalid email or password" });
@@ -66,7 +67,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.status(200).json({
@@ -75,10 +76,9 @@ exports.login = async (req, res) => {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -91,7 +91,7 @@ exports.getProfile = async (req, res) => {
 
     const result = await pool.query(
       "SELECT id, name, email, created_at FROM users WHERE id = $1",
-      [userId]
+      [userId],
     );
 
     if (result.rows.length === 0) {
@@ -102,7 +102,6 @@ exports.getProfile = async (req, res) => {
       success: true,
       user: result.rows[0],
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
