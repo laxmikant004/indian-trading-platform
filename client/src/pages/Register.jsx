@@ -1,24 +1,45 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import "./Login.css"; // reuse same premium CSS
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Register = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
+
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
     try {
-      const res = await API.post("/auth/register", form);
-      alert(res.data.message);
+      await API.post("/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      alert("Account created successfully!");
       navigate("/login");
     } catch (err) {
       alert(err.response?.data?.message || "Registration failed");
@@ -26,34 +47,105 @@ const Register = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Register</h2>
+    <div className="login-wrapper">
+      <div className="overlay"></div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          className="form-control mb-2"
-          name="name"
-          placeholder="Name"
-          onChange={handleChange}
-        />
+      <div className="login-container">
+        {/* LEFT SIDE */}
+        <div className="left-section">
+          <h2 className="brand" style={{ color: "#22c55e" }}>
+            📈 Indian Trading <span>Platform</span>
+          </h2>
 
-        <input
-          className="form-control mb-2"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-        />
+          <h1>
+            Start Your <br />
+            <span className="highlight">Trading Journey</span>
+          </h1>
 
-        <input
-          className="form-control mb-2"
-          name="password"
-          type="password"
-          placeholder="Password"
-          onChange={handleChange}
-        />
+          <p>
+            Create your account and access professional-grade tools with zero
+            brokerage.
+          </p>
 
-        <button className="btn btn-primary">Register</button>
-      </form>
+          <div className="stats">
+            <div>
+              <h3>₹0</h3>
+              <span>Brokerage</span>
+            </div>
+            <div>
+              <h3>Fast</h3>
+              <span>Execution</span>
+            </div>
+            <div>
+              <h3>Secure</h3>
+              <span>Platform</span>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="right-section">
+          <div className="glass-card">
+            <h2>📝 Create Account</h2>
+            <p>Open your trading account in seconds</p>
+
+            <form onSubmit={handleRegister}>
+              <input
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+
+              <div className="password-field">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <span onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+
+              <div className="password-field">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+                <span onClick={() => setShowConfirm(!showConfirm)}>
+                  {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+
+              <button type="submit">Create Account →</button>
+            </form>
+
+            <p className="signup">
+              Already have an account?{" "}
+              <span onClick={() => navigate("/login")}>Login here</span>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

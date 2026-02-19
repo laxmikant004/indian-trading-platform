@@ -1,32 +1,97 @@
 const YahooFinance = require("yahoo-finance2").default;
 
-// CREATE INSTANCE 👇 (this is what error is asking for)
 const yahooFinance = new YahooFinance({
-  suppressNotices: ["yahooSurvey"]
+  suppressNotices: ["yahooSurvey"],
 });
 
-
+/* ================= MARKET OVERVIEW ================= */
 exports.getMarketData = async (req, res) => {
   try {
     const symbols = [
-      "^NSEI",     // NIFTY 50
-      "^BSESN",    // SENSEX
+      "^NSEI",
+      "^BSESN",
       "RELIANCE.NS",
       "TCS.NS",
-      "INFY.NS"
+      "INFY.NS",
+      "HDFCBANK.NS",
+      "ICICIBANK.NS",
+      "SBIN.NS",
+      "ITC.NS",
+      "LT.NS",
+      "HINDUNILVR.NS",
+      "BHARTIARTL.NS"
     ];
 
     const data = await Promise.all(
-      symbols.map(symbol => yahooFinance.quote(symbol))
+      symbols.map((symbol) => yahooFinance.quote(symbol))
     );
 
+    res.json({ market: data });
+
+  } catch (error) {
+    console.error("MARKET ERROR:", error);
+    res.status(500).json({ message: "Failed to fetch market data" });
+  }
+};
+
+/* ================= SEARCH STOCK ================= */
+exports.searchStock = async (req, res) => {
+  try {
+    let symbol = req.params.symbol;
+
+    if (!symbol) {
+      return res.status(400).json({ message: "Symbol required" });
+    }
+
+    symbol = symbol.toUpperCase();
+
+    if (!symbol.startsWith("^") && !symbol.includes(".")) {
+      symbol += ".NS";
+    }
+
+    const stock = await yahooFinance.quote(symbol);
+
     res.json({
-      success: true,
-      market: data
+      stock: {
+        symbol: stock.symbol,
+        shortName: stock.shortName,
+        price: stock.regularMarketPrice,
+        change: stock.regularMarketChangePercent,
+      },
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch market data" });
+    res.status(404).json({ message: "Stock not found" });
+  }
+};
+
+/* ================= AUTO SUGGESTIONS ================= */
+exports.searchSuggestions = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query || query.length < 2) {
+      return res.json([]);
+    }
+
+    const result = await yahooFinance.search(query);
+
+    const filtered = result.quotes
+      .filter(
+        (q) =>
+          q.symbol?.includes(".NS") ||
+          q.symbol?.includes(".BO") ||
+          q.symbol?.startsWith("^")
+      )
+      .slice(0, 8)
+      .map((stock) => ({
+        symbol: stock.symbol,
+        name: stock.shortname || stock.longname,
+      }));
+
+    res.json(filtered);
+
+  } catch (error) {
+    res.status(500).json({ message: "Search failed" });
   }
 };

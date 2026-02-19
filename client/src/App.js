@@ -1,30 +1,52 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
+import MarketDashboard from "./pages/MarketDashboard";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./routes/PrivateRoute";
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
-import Watchlist from "./pages/Watchlist";
-function App() {
+import Trade from "./pages/Trade";
+import Portfolio from "./pages/Portfolio";
+import Trades from "./pages/Trades";
+
+function Layout() {
+  const location = useLocation();
+
+  const hideNavbarRoutes = ["/", "/login", "/register"];
+  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
+
   return (
-    <Router>
-      <Navbar />
+    <>
+      {!shouldHideNavbar && <Navbar />}
       <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-	<Route path="/profile" element={<Profile />} />
-	<Route path="/watchlist" element={<Watchlist />} />
-        {/* Protected Route */}
+
+        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              <MarketDashboard />
             </PrivateRoute>
           }
         />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/trade/:symbol" element={<PrivateRoute><Trade /></PrivateRoute>} />
+        <Route path="/portfolio" element={<PrivateRoute><Portfolio /></PrivateRoute>} />
+        <Route path="/trades" element={<PrivateRoute><Trades /></PrivateRoute>} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Layout />
     </Router>
   );
 }

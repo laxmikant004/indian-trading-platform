@@ -1,0 +1,134 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.home-container {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #111827, #0b1220);
+  color: white;
+  padding: 80px 60px;
+}
+
+/* HERO */
+
+.hero-section {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.hero-section h1 {
+  font-size: 54px;
+  margin-bottom: 20px;
+}
+
+.hero-section h1 span {
+  color: #22c55e;
+}
+
+.hero-section p {
+  max-width: 600px;
+  margin: auto;
+  color: #94a3b8;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.primary-btn {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border: none;
+  padding: 14px 30px;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid #334155;
+  padding: 14px 30px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+}
+
+/* MARKET SECTION */
+
+.market-section {
+  margin-bottom: 80px;
+}
+
+.market-section h2 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+}
+
+.market-card {
+  background: #111827;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
+}
+
+.market-card:hover {
+  transform: translateY(-5px);
+}
+
+.market-card h4 {
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.market-card h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.market-card.positive p {
+  color: #22c55e;
+}
+
+.market-card.negative p {
+  color: #ef4444;
+}
+
+/* METRICS */
+
+.metrics-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+}
+
+.metric-card {
+  background: #111827;
+  padding: 30px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.metric-card h2 {
+  color: #22c55e;
+  margin-bottom: 10px;
+}

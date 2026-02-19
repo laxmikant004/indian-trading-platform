@@ -1,7 +1,7 @@
-import axios from "axios";
+import API from "./api";
 
-const API = axios.create({
-  baseURL: "http://localhost:5000/api",
-});
+export const getMarketPrice = (symbol) =>
+  API.get(`/market/${symbol}`);
 
-export const fetchMarketData = () => API.get("/market");
+export const getSuggestions = (query) =>
+  API.get(`/market/suggestions?query=${query}`);

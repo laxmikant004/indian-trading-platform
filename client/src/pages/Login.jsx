@@ -1,22 +1,24 @@
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import "./Login.css";
+import API from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { email, password }
-      );
+      const res = await API.post("/auth/login", {
+        email,
+        password,
+      });
 
-      // Save token
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
@@ -27,28 +29,85 @@ const Login = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Login</h2>
+    <div className="login-wrapper">
+      <div className="overlay"></div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          className="form-control mb-2"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <div className="login-container">
+        {/* LEFT SIDE */}
+        <div className="left-section">
+          <h2 className="brand">
+            📈 Indian Trading <span>Platform</span>
+          </h2>
 
-        <input
-          className="form-control mb-2"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <h1>
+            Trade Smarter, <br />
+            <span className="highlight">Not Harder</span>
+          </h1>
 
-        <button className="btn btn-primary">Login</button>
-      </form>
+          <p>
+            Access NSE & BSE markets with professional tools, real-time data and
+            zero brokerage.
+          </p>
+
+          <div className="stats">
+            <div>
+              <h3>₹0</h3>
+              <span>Brokerage</span>
+            </div>
+            <div>
+              <h3>&lt;10ms</h3>
+              <span>Speed</span>
+            </div>
+            <div>
+              <h3>1.2Cr+</h3>
+              <span>Traders</span>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="right-section">
+          <div className="glass-card">
+            <h2>🔐 Welcome Back</h2>
+            <p>Login to your trading account</p>
+
+            <form onSubmit={handleLogin}>
+              <input
+                type="email"
+                placeholder="Email or Client ID"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+
+              <div className="password-field">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <span onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+
+              <button type="submit">Log In →</button>
+            </form>
+
+            <p className="signup">
+              Don't have an account?{" "}
+              <span
+                onClick={() => navigate("/register")}
+                style={{ cursor: "pointer" }}
+              >
+                Open Account — it's free
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -22,9 +22,18 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // 🔥 Insert user
     const newUser = await pool.query(
       "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
       [name, email, hashedPassword],
+    );
+
+    const userId = newUser.rows[0].id;
+
+    // 🔥 Create portfolio with default balance
+    await pool.query(
+      "INSERT INTO portfolios (user_id, balance) VALUES ($1, $2)",
+      [userId, 100000]  // ₹1 Lakh starting balance
     );
 
     res.status(201).json({
@@ -39,6 +48,7 @@ exports.register = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 /* Login */
 exports.login = async (req, res) => {
