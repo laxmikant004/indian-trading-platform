@@ -12,4 +12,6 @@ router.get("/search/:symbol", authMiddleware, marketController.searchStock);
 // 🔥 Auto suggestions
 router.get("/suggestions", authMiddleware, marketController.searchSuggestions);
 
+router.get("/movers", authMiddleware, marketController.getTopMovers);
+
 module.exports = router;

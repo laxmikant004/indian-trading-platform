@@ -1,9 +1,13 @@
 const db = require("../config/db");
+const YahooFinance = require("yahoo-finance2").default;
+const yahooFinance = new YahooFinance({
+  suppressNotices: ["yahooSurvey"]
+});
 
 const getPortfolio = async (req, res) => {
   try {
     const userId = req.user.id;
-
+    
     /* ===============================
        GET USER BALANCE
     =============================== */
@@ -26,7 +30,6 @@ const getPortfolio = async (req, res) => {
           END
         ) AS quantity,
 
-        -- Weighted average price
         (
           SUM(
             CASE 
@@ -57,6 +60,48 @@ const getPortfolio = async (req, res) => {
       `,
       [userId]
     );
+    
+    let holdings = holdingsResult.rows;
+
+    /* ===============================
+       FETCH LIVE PRICES
+    =============================== */
+    const symbols = holdings.map((h) => h.symbol);
+
+    let quotes = [];
+    if (symbols.length > 0) {
+      const quotesData = await yahooFinance.quote(symbols);
+
+      // Always convert to array
+      quotes = Array.isArray(quotesData)
+        ? quotesData
+        : [quotesData];
+    }
+
+    /* ===============================
+       MERGE LIVE DATA
+    =============================== */
+    holdings = holdings.map((holding) => {
+      const liveData = quotes.find(q => q.symbol === holding.symbol);
+
+      const livePrice = liveData?.regularMarketPrice || 0;
+
+      const quantity = Number(holding.quantity);
+      const avgPrice = Number(holding.avg_price);
+
+      const invested = quantity * avgPrice;
+      const current = quantity * livePrice;
+      const pl = current - invested;
+
+      return {
+        ...holding,
+        live_price: livePrice,
+        invested_value: invested,
+        current_value: current,
+        unrealized_pl: pl,
+        
+      };
+    });
 
     /* ===============================
        GET TRADES
@@ -73,7 +118,7 @@ const getPortfolio = async (req, res) => {
 
     res.json({
       balance: Number(balanceResult.rows[0]?.balance || 0),
-      holdings: holdingsResult.rows,
+      holdings,
       trades: tradesResult.rows,
     });
 

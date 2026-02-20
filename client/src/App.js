@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import MarketDashboard from "./pages/MarketDashboard";
@@ -9,6 +14,7 @@ import Profile from "./pages/Profile";
 import Trade from "./pages/Trade";
 import Portfolio from "./pages/Portfolio";
 import Trades from "./pages/Trades";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Layout() {
   const location = useLocation();
@@ -34,10 +40,40 @@ function Layout() {
             </PrivateRoute>
           }
         />
-        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-        <Route path="/trade/:symbol" element={<PrivateRoute><Trade /></PrivateRoute>} />
-        <Route path="/portfolio" element={<PrivateRoute><Portfolio /></PrivateRoute>} />
-        <Route path="/trades" element={<PrivateRoute><Trades /></PrivateRoute>} />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/trade/:symbol"
+          element={
+            <PrivateRoute>
+              <Trade />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/portfolio"
+          element={
+            <PrivateRoute>
+              <Portfolio />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/trades"
+          element={
+            <PrivateRoute>
+              <Trades />
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </>
   );

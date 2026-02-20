@@ -143,39 +143,3 @@ exports.getTradeHistory = async (req, res) => {
   }
 };
 
-/* ================= PORTFOLIO ================= */
-exports.getPortfolio = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const balanceResult = await db.query(
-      "SELECT balance FROM portfolios WHERE user_id=$1",
-      [userId]
-    );
-
-    const holdingsResult = await db.query(
-      `
-      SELECT symbol,
-             SUM(CASE WHEN type='BUY' THEN quantity ELSE -quantity END) AS quantity,
-             (
-               SUM(CASE WHEN type='BUY' THEN price*quantity ELSE 0 END)
-               /
-               NULLIF(SUM(CASE WHEN type='BUY' THEN quantity ELSE 0 END),0)
-             )::float AS avg_price
-      FROM trades
-      WHERE user_id=$1
-      GROUP BY symbol
-      HAVING SUM(CASE WHEN type='BUY' THEN quantity ELSE -quantity END) > 0
-      `,
-      [userId]
-    );
-
-    res.json({
-      balance: balanceResult.rows[0]?.balance || 0,
-      holdings: holdingsResult.rows
-    });
-
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch portfolio" });
-  }
-};
