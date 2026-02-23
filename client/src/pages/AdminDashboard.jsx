@@ -1,164 +1,167 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar, Doughnut } from "react-chartjs-2";
+import API from "../services/api";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend
+);
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [trades, setTrades] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [activeTab, setActiveTab] = useState("users");
-
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetchUsers();
-    fetchTrades();
-    fetchOrders();
+    const fetchData = async () => {
+      try {
+        const usersRes = await API.get("/admin/users");
+        const tradesRes = await API.get("/admin/trades");
+        const ordersRes = await API.get("/admin/orders");
+
+        setUsers(usersRes.data);
+        setTrades(tradesRes.data);
+        setOrders(ordersRes.data);
+      } catch (error) {
+        console.error("Error fetching admin data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const fetchUsers = async () => {
-    const res = await axios.get("http://localhost:5000/api/admin/users", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setUsers(res.data);
+  const pendingOrders = orders.filter(
+    (o) => o.status === "PENDING"
+  ).length;
+
+  const executedOrders = orders.filter(
+    (o) => o.status === "EXECUTED"
+  ).length;
+
+  const totalVolume = trades.reduce(
+    (acc, t) => acc + Number(t.total || 0),
+    0
+  );
+
+  const barData = {
+    labels: ["Users", "Trades", "Pending", "Executed"],
+    datasets: [
+      {
+        label: "Platform Stats",
+        data: [
+          users.length,
+          trades.length,
+          pendingOrders,
+          executedOrders,
+        ],
+        backgroundColor: [
+          "#3b82f6",
+          "#22c55e",
+          "#f59e0b",
+          "#10b981",
+        ],
+      },
+    ],
   };
 
-  const fetchTrades = async () => {
-    const res = await axios.get("http://localhost:5000/api/admin/trades", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setTrades(res.data);
-  };
-
-  const fetchOrders = async () => {
-    const res = await axios.get("http://localhost:5000/api/admin/orders", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setOrders(res.data);
-  };
-
-  const cardStyle = {
-    background: "#111827",
-    padding: "20px",
-    borderRadius: "16px",
-    marginBottom: "20px",
-    boxShadow: "0 0 20px rgba(0,255,200,0.05)",
+  const doughnutData = {
+    labels: ["Pending Orders", "Executed Orders"],
+    datasets: [
+      {
+        data: [pendingOrders, executedOrders],
+        backgroundColor: ["#f59e0b", "#22c55e"],
+      },
+    ],
   };
 
   return (
-    <div style={{ padding: "40px", color: "white" }}>
-      <h2 style={{ marginBottom: "30px" }}>Admin Dashboard</h2>
+    <div>
+      {/* Page Title */}
+      <h1 style={{ marginBottom: "30px" }}>
+        Platform Overview
+      </h1>
 
-      {/* ================= SUMMARY CARDS ================= */}
-      <div style={{ display: "flex", gap: "20px", marginBottom: "40px" }}>
-        <div style={cardStyle}>
-          <h4>Total Users</h4>
-          <h2>{users.length}</h2>
-        </div>
-        <div style={cardStyle}>
-          <h4>Total Trades</h4>
-          <h2>{trades.length}</h2>
-        </div>
-        <div style={cardStyle}>
-          <h4>Pending Orders</h4>
-          <h2>{orders.filter(o => o.status === "PENDING").length}</h2>
-        </div>
+      {/* Stats Cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "20px",
+          marginBottom: "40px",
+        }}
+      >
+        <Card title="Total Users" value={users.length} />
+        <Card title="Total Trades" value={trades.length} />
+        <Card title="Pending Orders" value={pendingOrders} />
+        <Card
+          title="Total Volume"
+          value={`₹ ${totalVolume.toFixed(2)}`}
+        />
       </div>
 
-      {/* ================= TABS ================= */}
-      <div style={{ marginBottom: "20px" }}>
-        <button onClick={() => setActiveTab("users")}>Users</button>
-        <button onClick={() => setActiveTab("trades")}>Trades</button>
-        <button onClick={() => setActiveTab("orders")}>Orders</button>
+      {/* Charts Section */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: "30px",
+        }}
+      >
+        <div
+          style={{
+            background: "#1e293b",
+            padding: "25px",
+            borderRadius: "12px",
+          }}
+        >
+          <h3 style={{ marginBottom: "20px" }}>
+            Platform Statistics
+          </h3>
+          <Bar data={barData} />
+        </div>
+
+        <div
+          style={{
+            background: "#1e293b",
+            padding: "25px",
+            borderRadius: "12px",
+          }}
+        >
+          <h3 style={{ marginBottom: "20px" }}>
+            Order Distribution
+          </h3>
+          <Doughnut data={doughnutData} />
+        </div>
       </div>
-
-      {/* ================= USERS ================= */}
-      {activeTab === "users" && (
-        <div style={cardStyle}>
-          <h3>All Users</h3>
-          <table width="100%">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
-                <tr key={u.id}>
-                  <td>{u.id}</td>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
-                  <td>{u.role}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* ================= TRADES ================= */}
-      {activeTab === "trades" && (
-        <div style={cardStyle}>
-          <h3>All Trades</h3>
-          <table width="100%">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Symbol</th>
-                <th>Type</th>
-                <th>Qty</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {trades.map((t) => (
-                <tr key={t.id}>
-                  <td>{t.user_id}</td>
-                  <td>{t.symbol}</td>
-                  <td>{t.type}</td>
-                  <td>{t.quantity}</td>
-                  <td>₹ {t.price}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* ================= ORDERS ================= */}
-      {activeTab === "orders" && (
-        <div style={cardStyle}>
-          <h3>All Orders</h3>
-          <table width="100%">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Symbol</th>
-                <th>Order Type</th>
-                <th>Side</th>
-                <th>Qty</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((o) => (
-                <tr key={o.id}>
-                  <td>{o.user_id}</td>
-                  <td>{o.symbol}</td>
-                  <td>{o.order_type}</td>
-                  <td>{o.type}</td>
-                  <td>{o.quantity}</td>
-                  <td>{o.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
     </div>
   );
 };
+
+const Card = ({ title, value }) => (
+  <div
+    style={{
+      background: "#1e293b",
+      padding: "20px",
+      borderRadius: "12px",
+      boxShadow: "0 0 15px rgba(0,0,0,0.3)",
+    }}
+  >
+    <h4 style={{ opacity: 0.7 }}>{title}</h4>
+    <h2 style={{ marginTop: "10px" }}>{value}</h2>
+  </div>
+);
 
 export default AdminDashboard;

@@ -19,10 +19,19 @@ const Login = () => {
         password,
       });
 
+      // Store token
       localStorage.setItem("token", res.data.token);
+
+      // Store full user object
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      navigate("/dashboard");
+      // 🔥 Redirect based on role
+      if (res.data.user.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     }
@@ -33,7 +42,6 @@ const Login = () => {
       <div className="overlay"></div>
 
       <div className="login-container">
-        {/* LEFT SIDE */}
         <div className="left-section">
           <h2 className="brand">
             📈 Indian Trading <span>Platform</span>
@@ -48,24 +56,8 @@ const Login = () => {
             Access NSE & BSE markets with professional tools, real-time data and
             zero brokerage.
           </p>
-
-          <div className="stats">
-            <div>
-              <h3>₹0</h3>
-              <span>Brokerage</span>
-            </div>
-            <div>
-              <h3>&lt;10ms</h3>
-              <span>Speed</span>
-            </div>
-            <div>
-              <h3>1.2Cr+</h3>
-              <span>Traders</span>
-            </div>
-          </div>
         </div>
 
-        {/* RIGHT SIDE */}
         <div className="right-section">
           <div className="glass-card">
             <h2>🔐 Welcome Back</h2>
@@ -74,7 +66,7 @@ const Login = () => {
             <form onSubmit={handleLogin}>
               <input
                 type="email"
-                placeholder="Email or Client ID"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -95,16 +87,6 @@ const Login = () => {
 
               <button type="submit">Log In →</button>
             </form>
-
-            <p className="signup">
-              Don't have an account?{" "}
-              <span
-                onClick={() => navigate("/register")}
-                style={{ cursor: "pointer" }}
-              >
-                Open Account — it's free
-              </span>
-            </p>
           </div>
         </div>
       </div>

@@ -4,8 +4,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     navigate("/login");
   };
 
@@ -14,7 +16,10 @@ const Navbar = () => {
     color: location.pathname === path ? "#22c55e" : "#cbd5e1",
     fontWeight: location.pathname === path ? "700" : "500",
     fontSize: "14px",
+    transition: "0.2s",
   });
+
+  const isAdmin = user?.role === "ADMIN";
 
   return (
     <nav
@@ -34,7 +39,7 @@ const Navbar = () => {
     >
       {/* Logo */}
       <h2
-        onClick={() => navigate("/dashboard")}
+        onClick={() => navigate(isAdmin ? "/admin" : "/dashboard")}
         style={{
           margin: 0,
           cursor: "pointer",
@@ -46,11 +51,37 @@ const Navbar = () => {
         📈 Indian Stock Trading Platform
       </h2>
 
-      {/* Links */}
       <div style={{ display: "flex", gap: "30px", alignItems: "center" }}>
-        <Link to="/dashboard" style={linkStyle("/dashboard")}>Dashboard</Link>
-        <Link to="/portfolio" style={linkStyle("/portfolio")}>Portfolio</Link>
-        <Link to="/trades" style={linkStyle("/trades")}>Trades</Link>
+        {!isAdmin && (
+          <>
+            <Link to="/dashboard" style={linkStyle("/dashboard")}>
+              Dashboard
+            </Link>
+            <Link to="/portfolio" style={linkStyle("/portfolio")}>
+              Portfolio
+            </Link>
+            <Link to="/trades" style={linkStyle("/trades")}>
+              Trades
+            </Link>
+          </>
+        )}
+
+        {isAdmin && (
+          <>
+            <Link to="/admin" style={linkStyle("/admin")}>
+              Admin Panel
+            </Link>
+            <Link to="/admin/users" style={linkStyle("/admin/users")}>
+              Users
+            </Link>
+            <Link to="/admin/orders" style={linkStyle("/admin/orders")}>
+              Orders
+            </Link>
+            <Link to="/admin/trades" style={linkStyle("/admin/trades")}>
+              Trades
+            </Link>
+          </>
+        )}
 
         <button
           onClick={handleLogout}

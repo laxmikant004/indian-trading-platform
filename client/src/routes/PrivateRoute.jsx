@@ -1,14 +1,15 @@
 import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, requiredRole }) => {
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  // If not logged in, redirect to login
-  if (!token) {
-    return <Navigate to="/login" replace />;
+  if (!token) return <Navigate to="/login" />;
+
+  if (requiredRole && user?.role !== requiredRole) {
+    return <Navigate to="/dashboard" />;
   }
 
-  // If logged in, show the page
   return children;
 };
 
