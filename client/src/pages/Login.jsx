@@ -1,39 +1,39 @@
 import React, { useState } from "react";
 import "./Login.css";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
 
     try {
-      const res = await API.post("/auth/login", {
-        email,
-        password,
-      });
+      const res = await API.post("/auth/login", { email, password });
 
-      // Store token
+      // Store token & user
       localStorage.setItem("token", res.data.token);
-
-      // Store full user object
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // 🔥 Redirect based on role
+      // Redirect based on role
       if (res.data.user.role === "ADMIN") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
       }
-
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      setErrorMsg(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,12 +80,24 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <span onClick={() => setShowPassword(!showPassword)}>
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="eye-icon"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
 
-              <button type="submit">Log In →</button>
+              {errorMsg && <p className="error-msg">{errorMsg}</p>}
+
+              <button type="submit" disabled={loading}>
+                {loading ? "Logging in..." : "Log In →"}
+              </button>
+
+              <div className="forgot-password">
+                <Link to="/forgot-password">Forgot Password?</Link>
+              </div>
             </form>
           </div>
         </div>

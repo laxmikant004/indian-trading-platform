@@ -15,7 +15,8 @@ import Profile from "./pages/Profile";
 import Trade from "./pages/Trade";
 import Portfolio from "./pages/Portfolio";
 import Trades from "./pages/Trades";
-
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import AdminLayout from "./pages/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
@@ -87,6 +88,9 @@ function Layout() {
             </PrivateRoute>
           }
         />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* Admin Routes */}
         <Route
