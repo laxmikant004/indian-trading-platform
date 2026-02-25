@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Login.css"; // reuse same premium CSS
+import "./Register.css";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -16,6 +16,8 @@ const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -26,23 +28,27 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setErrorMsg("Passwords do not match");
       return;
     }
 
     try {
+      setLoading(true);
+
       await API.post("/auth/register", {
         name: formData.name,
         email: formData.email,
         password: formData.password,
       });
 
-      alert("Account created successfully!");
       navigate("/login");
     } catch (err) {
-      alert(err.response?.data?.message || "Registration failed");
+      setErrorMsg(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,8 +59,9 @@ const Register = () => {
       <div className="login-container">
         {/* LEFT SIDE */}
         <div className="left-section">
-          <h2 className="brand" style={{ color: "#22c55e" }}>
-            📈 Indian Trading <span>Platform</span>
+          <h2 className="brand">
+            <img src="/unnamed.png" alt="logo" className="logo" />
+            Indian Trading <span>Platform</span>
           </h2>
 
           <h1>
@@ -108,6 +115,7 @@ const Register = () => {
                 required
               />
 
+              {/* PASSWORD */}
               <div className="password-field">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -117,11 +125,15 @@ const Register = () => {
                   onChange={handleChange}
                   required
                 />
-                <span onClick={() => setShowPassword(!showPassword)}>
+                <span
+                  className="eye-icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
 
+              {/* CONFIRM PASSWORD */}
               <div className="password-field">
                 <input
                   type={showConfirm ? "text" : "password"}
@@ -131,17 +143,26 @@ const Register = () => {
                   onChange={handleChange}
                   required
                 />
-                <span onClick={() => setShowConfirm(!showConfirm)}>
+                <span
+                  className="eye-icon"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                >
                   {showConfirm ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
 
-              <button type="submit">Create Account →</button>
+              {errorMsg && <p className="error-msg">{errorMsg}</p>}
+
+              <button type="submit" disabled={loading}>
+                {loading ? "Creating..." : "Create Account →"}
+              </button>
             </form>
 
             <p className="signup">
               Already have an account?{" "}
-              <span onClick={() => navigate("/login")}>Login here</span>
+              <span onClick={() => navigate("/login")}>
+                Login here
+              </span>
             </p>
           </div>
         </div>

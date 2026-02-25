@@ -10,6 +10,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -20,16 +21,11 @@ const Login = () => {
     try {
       const res = await API.post("/auth/login", { email, password });
 
-      // Store token & user
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // Redirect based on role
-      if (res.data.user.role === "ADMIN") {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
+      if (res.data.user.role === "ADMIN") navigate("/admin");
+      else navigate("/dashboard");
     } catch (err) {
       setErrorMsg(err.response?.data?.message || "Login failed");
     } finally {
@@ -42,9 +38,11 @@ const Login = () => {
       <div className="overlay"></div>
 
       <div className="login-container">
+        {/* LEFT SIDE */}
         <div className="left-section">
           <h2 className="brand">
-            📈 Indian Trading <span>Platform</span>
+            <img src="/unnamed.png" alt="logo" className="logo" />
+            Indian Trading <span>Platform</span>
           </h2>
 
           <h1>
@@ -58,6 +56,7 @@ const Login = () => {
           </p>
         </div>
 
+        {/* RIGHT SIDE */}
         <div className="right-section">
           <div className="glass-card">
             <h2>🔐 Welcome Back</h2>
@@ -81,9 +80,8 @@ const Login = () => {
                   required
                 />
                 <span
-                  onClick={() => setShowPassword(!showPassword)}
                   className="eye-icon"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
