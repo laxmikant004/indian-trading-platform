@@ -22,9 +22,17 @@ exports.getMarketData = async (req, res) => {
       "BHARTIARTL.NS",
     ];
 
-    const data = await Promise.all(
-      symbols.map((symbol) => yahooFinance.quote(symbol))
-    );
+    const data = [];
+
+    // Fetch one-by-one to avoid timeout
+    for (const symbol of symbols) {
+      try {
+        const quote = await yahooFinance.quote(symbol);
+        data.push(quote);
+      } catch (err) {
+        console.log("Failed symbol:", symbol);
+      }
+    }
 
     res.json({ market: data });
   } catch (error) {
@@ -44,6 +52,17 @@ exports.searchStock = async (req, res) => {
 
     symbol = symbol.toUpperCase();
 
+    // Auto index mapping
+    const indexMap = {
+      BANKNIFTY: "^NSEBANK",
+      NIFTY: "^NSEI",
+      SENSEX: "^BSESN",
+    };
+
+    if (indexMap[symbol]) {
+      symbol = indexMap[symbol];
+    }
+
     if (!symbol.startsWith("^") && !symbol.includes(".")) {
       symbol += ".NS";
     }
@@ -59,6 +78,7 @@ exports.searchStock = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log("SEARCH ERROR:", error.message);
     res.status(404).json({ message: "Stock not found" });
   }
 };
@@ -75,7 +95,7 @@ exports.searchSuggestions = async (req, res) => {
     const result = await yahooFinance.search(query);
 
     const filtered = result.quotes
-      .filter(
+      ?.filter(
         (q) =>
           q.symbol?.includes(".NS") ||
           q.symbol?.includes(".BO") ||
@@ -85,10 +105,11 @@ exports.searchSuggestions = async (req, res) => {
       .map((stock) => ({
         symbol: stock.symbol,
         name: stock.shortname || stock.longname,
-      }));
+      })) || [];
 
     res.json(filtered);
   } catch (error) {
+    console.log("SUGGESTION ERROR:", error.message);
     res.status(500).json({ message: "Search failed" });
   }
 };
@@ -105,14 +126,21 @@ exports.getTopMovers = async (req, res) => {
       "SBIN.NS",
     ];
 
-    const data = await Promise.all(
-      symbols.map((s) => yahooFinance.quote(s))
-    );
+    const data = [];
+
+    for (const symbol of symbols) {
+      try {
+        const quote = await yahooFinance.quote(symbol);
+        data.push(quote);
+      } catch (err) {
+        console.log("Failed mover:", symbol);
+      }
+    }
 
     const sorted = data.sort(
       (a, b) =>
-        b.regularMarketChangePercent -
-        a.regularMarketChangePercent
+        (b.regularMarketChangePercent || 0) -
+        (a.regularMarketChangePercent || 0)
     );
 
     res.json({
@@ -120,6 +148,7 @@ exports.getTopMovers = async (req, res) => {
       losers: sorted.slice(-3),
     });
   } catch (err) {
+    console.error("MOVERS ERROR:", err);
     res.status(500).json({ message: "Failed to fetch movers" });
   }
 };

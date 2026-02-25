@@ -11,27 +11,37 @@ const Trade = ({ symbol }) => {
   const [currentPrice, setCurrentPrice] = useState(0);
 
   const isIndex = symbol?.startsWith("^");
+console.log("Trade symbol:", symbol);
+ // Fetch user's balance & live price
+useEffect(() => {
+  if (!symbol) return;
 
-  // Fetch user's balance & live price
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!symbol) return;
-      try {
-        const portfolio = await axios.get("/api/portfolio", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        setBalance(portfolio.data.balance);
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        const stockData = await axios.get(`/api/market/search/${symbol}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        setCurrentPrice(stockData.data.stock.price);
-      } catch (err) {
-        console.error("Error fetching data", err);
-      }
-    };
-    fetchData();
-  }, [symbol]);
+      const portfolio = await axios.get("/api/portfolio", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setBalance(portfolio.data.balance);
+
+      const stockData = await axios.get(
+        `/api/market/search/${symbol}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setCurrentPrice(stockData.data.stock.price);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchData();
+}, [symbol]);
 
   const handleTrade = async (type) => {
     try {
