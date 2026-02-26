@@ -3,6 +3,7 @@ import API from "../services/api";
 import Portfolio from "./Portfolio";
 import Trades from "./Trades";
 import Trade from "./Trade";
+import PendingOrders from "./PendingOrder";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("market");
@@ -373,6 +374,9 @@ const Dashboard = () => {
 
       case "trades":
         return <Trades />;
+      
+      case "pending":
+        return <PendingOrders />;
 
       case "trade":
         return tradeSymbol ? (
@@ -396,7 +400,7 @@ const Dashboard = () => {
           background: "#111827",
         }}
       >
-        {["market", "portfolio", "trades", "trade"].map((tab) => (
+        {["market", "portfolio", "trades","pending", "trade"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}

@@ -4,7 +4,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import MarketDashboard from "./pages/MarketDashboard";
@@ -23,6 +23,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminOrders from "./pages/AdminOrders";
 import AdminTrades from "./pages/AdminTrades";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import PendingOrders from "./pages/PendingOrder";
 
 function Layout() {
   const location = useLocation();
@@ -89,6 +90,15 @@ function Layout() {
           }
         />
 
+        <Route
+          path="/pending-orders"
+          element={
+            <PrivateRoute>
+              <PendingOrders />
+            </PrivateRoute>
+          }
+        />
+
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
@@ -115,7 +125,37 @@ function Layout() {
 function App() {
   return (
     <Router>
+
+      {/* 🔔 Global Toast Notifications */}
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#0f172a",
+            color: "#fff",
+            border: "1px solid #1e293b",
+            padding: "12px 16px",
+            borderRadius: "8px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#22c55e",
+              secondary: "#0f172a",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#0f172a",
+            },
+          },
+        }}
+      />
+
       <Layout />
+
     </Router>
   );
 }
