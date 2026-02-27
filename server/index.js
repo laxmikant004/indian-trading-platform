@@ -15,6 +15,7 @@ const tradeRoutes = require("./routes/tradeRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const adminAnalyticsRoutes = require("./routes/adminAnalytics");
 
 /* ================= MIDDLEWARE ================= */
 app.use(
@@ -33,7 +34,7 @@ app.use("/api/trade", tradeRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
-
+app.use("/api/admin", adminAnalyticsRoutes);
 /* ================= HEALTH CHECK ================= */
 app.get("/api/health", (req, res) => {
   res.json({ status: "Server is running" });
