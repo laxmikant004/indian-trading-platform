@@ -400,7 +400,7 @@ const Dashboard = () => {
           background: "#111827",
         }}
       >
-        {["market", "portfolio", "trades","pending", "trade"].map((tab) => (
+        {["market", "portfolio", "trades","pending"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}

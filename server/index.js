@@ -22,7 +22,7 @@ app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 
@@ -57,10 +57,21 @@ const executeOrders = async () => {
     `);
 
     for (const order of orders) {
-      const quote = await yahooFinance.quote(order.symbol);
-      const marketPrice = quote?.regularMarketPrice;
+      let marketPrice = null;
 
-      if (!marketPrice) continue;
+      try {
+        const quote = await yahooFinance.quote(order.symbol);
+        marketPrice = quote?.regularMarketPrice;
+        if (!marketPrice) {
+          console.log(
+            `⚠️ No market price for ${order.symbol}, skipping order ${order.id}`,
+          );
+          continue;
+        }
+      } catch (err) {
+        console.error(`⚠️ Failed to fetch ${order.symbol}:`, err.message);
+        continue; // skip this order but continue others
+      }
 
       let shouldExecute = false;
       let executedPrice = marketPrice;
@@ -92,7 +103,7 @@ const executeOrders = async () => {
            FROM portfolios 
            WHERE user_id=$1 
            FOR UPDATE`,
-          [order.user_id]
+          [order.user_id],
         );
 
         const balance = balanceResult.rows[0]?.balance || 0;
@@ -100,7 +111,7 @@ const executeOrders = async () => {
         if (balance < total) {
           await client.query(
             "UPDATE orders SET status='CANCELLED' WHERE id=$1",
-            [order.id]
+            [order.id],
           );
           console.log(`❌ Cancelled order ${order.id} (insufficient balance)`);
           continue;
@@ -108,7 +119,7 @@ const executeOrders = async () => {
 
         await client.query(
           "UPDATE portfolios SET balance = balance - $1 WHERE user_id=$2",
-          [total, order.user_id]
+          [total, order.user_id],
         );
       }
 
@@ -125,7 +136,7 @@ const executeOrders = async () => {
            FROM trades
            WHERE user_id=$1 AND symbol=$2
            FOR UPDATE`,
-          [order.user_id, order.symbol]
+          [order.user_id, order.symbol],
         );
 
         const availableShares = parseInt(holdingResult.rows[0].qty || 0);
@@ -133,7 +144,7 @@ const executeOrders = async () => {
         if (availableShares < order.quantity) {
           await client.query(
             "UPDATE orders SET status='CANCELLED' WHERE id=$1",
-            [order.id]
+            [order.id],
           );
           console.log(`❌ Cancelled order ${order.id} (not enough shares)`);
           continue;
@@ -141,7 +152,7 @@ const executeOrders = async () => {
 
         await client.query(
           "UPDATE portfolios SET balance = balance + $1 WHERE user_id=$2",
-          [total, order.user_id]
+          [total, order.user_id],
         );
       }
 
@@ -156,24 +167,22 @@ const executeOrders = async () => {
           order.type,
           order.quantity,
           executedPrice,
-          total
-        ]
+          total,
+        ],
       );
 
       /* ================= UPDATE ORDER STATUS ================= */
 
-      await client.query(
-        "UPDATE orders SET status='EXECUTED' WHERE id=$1",
-        [order.id]
-      );
+      await client.query("UPDATE orders SET status='EXECUTED' WHERE id=$1", [
+        order.id,
+      ]);
 
       console.log(
-        `✅ Executed ${order.type} ${order.symbol} | Qty: ${order.quantity} @ ₹${executedPrice}`
+        `✅ Executed ${order.type} ${order.symbol} | Qty: ${order.quantity} @ ₹${executedPrice}`,
       );
     }
 
     await client.query("COMMIT");
-
   } catch (err) {
     await client.query("ROLLBACK");
     console.error("🚨 ORDER ENGINE ERROR:", err);
@@ -181,7 +190,6 @@ const executeOrders = async () => {
     client.release();
   }
 };
-
 
 // Run every 15 seconds
 setInterval(executeOrders, 15000);
