@@ -1,227 +1,211 @@
-# 🇮🇳 Indian Trading Platform (Mini Project)
+# 🇮🇳 Indian Trading Platform
 
-## 📌 Project Overview
+A Full-Stack Stock Trading Simulation Platform built using **React,
+Node.js, Express, and PostgreSQL** with real-time market price
+integration via Yahoo Finance.
 
-This is a **college mini project** developed using the **Scrum methodology**.
+------------------------------------------------------------------------
 
-The project is a **full-stack Indian Trading Platform** that allows users to:
+## 🚀 Overview
 
-* Register & Login securely (JWT based)
-* View Indian stock market data (NSE & BSE)
-* Place Buy/Sell orders (paper trading)
-* Track portfolio & trade history
-* Access admin features
+This platform allows users to:
 
-📍 **Current Status:**
+-   Register & Login securely (JWT Authentication)
+-   Place BUY / SELL Orders
+-   Use Market, Limit & Stop-Loss Orders
+-   Manage Portfolio & Balance
+-   Track Trade History
+-   Maintain a Watchlist
+-   Admin Monitoring & Analytics Dashboard
 
-* ✅ Sprint 1: Authentication & Dashboard
-* ✅ Sprint 2: Market & Trading Engine
-* ✅ Sprint 3: Portfolio & Trade History
-* ✅ Sprint 4: Enhancements & Admin Controls
+------------------------------------------------------------------------
 
----
+## 🏗️ Project Architecture
 
-## 🛠 Tech Stack
+indian-trading-platform/ │ ├── client/ \# React Frontend ├── server/ \#
+Express Backend ├── schema.sql \# PostgreSQL Database Schema └──
+README.md
 
-### Frontend
+------------------------------------------------------------------------
 
-* React.js
-* React Router DOM
-* Axios
-* Bootstrap
+## ⚙️ System Requirements
 
-### Backend
+  Software     Recommended Version
+  ------------ ---------------------
+  Node.js      v18+
+  npm          v9+
+  PostgreSQL   v14+
+  Git          Latest
 
-* Node.js
-* Express.js
-* PostgreSQL
-* JWT Authentication
-* bcrypt
-* yahoo-finance2 API
-* CORS
+Verify installation:
 
----
+    node -v
+    npm -v
+    psql --version
 
-## 📂 Project Structure
+------------------------------------------------------------------------
 
-```
-indian-trading-platform/
-├── client/
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── Login.jsx
-│   │   │   ├── Register.jsx
-│   │   │   └── Dashboard.jsx
-│   │   ├── components/
-│   │   │   └── Navbar.jsx
-│   │   └── services/
-│   │       └── api.js
-│   └── package.json
-│
-├── server/
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── marketController.js
-│   │   ├── orderController.js
-│   │   ├── portfolioController.js
-│   │   ├── tradeController.js
-│   │   └── watchlistController.js
-│   ├── routes/
-│   │   ├── authRoutes.js
-│   │   ├── marketRoutes.js
-│   │   ├── orderRoutes.js
-│   │   ├── portfolioRoutes.js
-│   │   ├── tradeRoutes.js
-│   │   ├── watchlistRoutes.js
-│   │   └── adminRoutes.js
-│   ├── middleware/
-│   │   ├── authMiddleware.js
-│   │   └── adminMiddleware.js
-│   ├── config/
-│   └── index.js
-│
-└── README.md
-```
+## 🗄️ Database Setup
 
----
+### 1️⃣ Create Database
 
-## ✅ Sprint Deliverables
+    CREATE DATABASE trading_platform;
 
-### Sprint 1 – Foundation
+### 2️⃣ Run Schema
 
-* User authentication
-* Secure password storage (bcrypt)
-* Basic dashboard UI
+From project root:
 
-### Sprint 2 – Market & Trading
+    psql -U postgres -d trading_platform -f schema.sql
 
-* Real-time NSE/BSE market data
-* Buy/Sell orders (paper trading engine)
-* Trade validation
+This creates:
 
-### Sprint 3 – Portfolio & History
+-   users
+-   portfolios
+-   orders
+-   trades
+-   watchlist
 
-* Portfolio tracking
-* Profit/Loss calculation
-* Trade history and analytics
-* Charts for portfolio performance
+------------------------------------------------------------------------
 
-### Sprint 4 – Enhancements
+## 🔐 Backend Environment Setup
 
-* Watchlist feature
-* Limit & Stop-loss orders
-* Top gainers/losers
-* Admin dashboard for user & trade management
+Navigate to server folder:
 
----
+    cd server
 
-## 🔐 Authentication Flow
+Create a `.env` file:
 
-1. User registers → password hashed using bcrypt
-2. User logs in → JWT token generated
-3. Token stored in localStorage
-4. Axios interceptor attaches token automatically
-5. Protected APIs verified via auth middleware
-6. Logout removes token
+    DB_USER=postgres
+    DB_PASSWORD=your_password
+    DB_NAME=trading_platform
+    DB_HOST=localhost
+    JWT_SECRET=your_super_secret_key
+    PORT=5000
 
----
+------------------------------------------------------------------------
 
-## 🌐 API Endpoints
+## 🚀 Backend Setup
 
-### Auth
+Install dependencies:
 
-* POST `/api/auth/register`
-* POST `/api/auth/login`
-* GET `/api/auth/profile` (protected)
+    npm install
 
-### Market (Protected)
+Run server:
 
-* GET `/api/market`
-* GET `/api/market/search/:symbol`
-* GET `/api/market/suggestions`
-* GET `/api/market/movers`
+    node index.js
 
-### Orders & Trades
+Or development mode:
 
-* POST `/api/orders` (place order)
-* POST `/api/trade/buy`
-* POST `/api/trade/sell`
-* GET `/api/trade/history`
+    npx nodemon index.js
 
-### Portfolio
+Server runs at:
 
-* GET `/api/portfolio`
+    http://localhost:5000
 
-### Watchlist
+Health Check:
 
-* POST `/api/watchlist`
-* DELETE `/api/watchlist/:symbol`
-* GET `/api/watchlist`
+    GET /api/health
 
-### Admin
+------------------------------------------------------------------------
 
-* GET `/api/admin/stats`
-* GET `/api/admin/users`
-* PUT `/api/admin/users/:id/block`
-* PUT `/api/admin/users/:id/unblock`
-* DELETE `/api/admin/users/:id`
-* GET `/api/admin/trades`
-* GET `/api/admin/orders`
+## 💻 Frontend Setup
 
----
+Navigate to client:
 
-## ⚙️ Setup Instructions
+    cd client
+    npm install
+    npm start
 
-### Clone Repository
+Frontend runs at:
 
-```bash
-git clone https://github.com/laxmikant004/indian-trading-platform.git
-cd indian-trading-platform
-```
+    http://localhost:3000
 
-### Backend Setup
+------------------------------------------------------------------------
 
-```bash
-cd server
-npm install
-npm run dev
-```
+## 🔄 Automated Order Execution Engine
 
-Create `.env` file:
+The backend includes a production-safe order execution engine:
 
-```
-PORT=5000
-DATABASE_URL=your_postgres_url
-JWT_SECRET=your_secret
-```
+-   Executes every 15 seconds
+-   Fetches live market prices
+-   Processes LIMIT & STOP_LOSS orders
+-   Validates user balance and holdings
+-   Uses PostgreSQL transactions (BEGIN / COMMIT / ROLLBACK)
+-   Uses FOR UPDATE SKIP LOCKED for concurrency safety
 
-### Frontend Setup
+------------------------------------------------------------------------
 
-```bash
-cd client
-npm install
-npm start
-```
+## 🔒 Security Features
 
----
+-   Password hashing using bcrypt
+-   JWT-based authentication
+-   Role-based access control (USER / ADMIN)
+-   Protected routes middleware
+-   Transaction-safe execution
 
-## 🚀 Git Push Steps
+------------------------------------------------------------------------
 
-```bash
-git add README.md
-git commit -m "Update README with project details"
-git pull origin main --rebase
-git push origin main
-```
+## 📊 Features
 
----
+### 👤 User
 
-## 🎓 Academic Note
+-   Register / Login
+-   Buy & Sell Stocks
+-   Portfolio Tracking
+-   Trade History
+-   Watchlist Management
+-   Password Reset
 
-This project is created strictly for **educational purposes**.
+### 👨‍💼 Admin
 
----
+-   Admin Dashboard
+-   View Users
+-   View Orders
+-   View Trades
+-   Platform Analytics
 
-## 👨‍💻 Author
+------------------------------------------------------------------------
 
-**Laxmikant**
+## 🧪 Quick Start (Full Setup)
+
+    git clone https://github.com/your-username/indian-trading-platform.git
+    cd indian-trading-platform
+
+    # Setup database first
+
+    cd server
+    npm install
+    npx nodemon index.js
+
+    # Open new terminal
+    cd client
+    npm install
+    npm start
+
+------------------------------------------------------------------------
+
+## 🐞 Troubleshooting
+
+-   Ensure PostgreSQL is running
+-   Verify .env credentials
+-   Ensure backend runs before frontend
+-   Wait 15 seconds for order engine execution
+
+------------------------------------------------------------------------
+
+## 🎓 Academic Purpose
+
+This project demonstrates:
+
+-   Full-Stack Development
+-   REST API Design
+-   Authentication & Authorization
+-   Financial Order Simulation
+-   Database Transaction Handling
+-   Admin Dashboard Architecture
+
+------------------------------------------------------------------------
+
+## 📜 License
+
+Developed for educational and academic purposes.
