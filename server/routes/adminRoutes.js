@@ -129,5 +129,48 @@ router.get("/orders", auth, admin, async (req, res) => {
   }
 });
 
+/* ================= CHANGE USER ROLE (TOGGLE) ================= */
+router.put("/users/:id/role", auth, admin, async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+
+    // Prevent admin from changing their own role
+    if (userId === req.user.id) {
+      return res.status(400).json({ message: "You cannot change your own role" });
+    }
+
+    const userResult = await db.query(
+      "SELECT role FROM users WHERE id = $1",
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const currentRole = userResult.rows[0].role;
+
+    if (currentRole === "BLOCKED") {
+      return res.status(400).json({ message: "Blocked users cannot change role" });
+    }
+
+    const newRole =
+      currentRole === "ADMIN" ? "USER" : "ADMIN";
+
+    await db.query(
+      "UPDATE users SET role = $1 WHERE id = $2",
+      [newRole, userId]
+    );
+
+    res.json({
+      message: "Role updated successfully",
+      newRole,
+    });
+
+  } catch (error) {
+    console.error("CHANGE ROLE ERROR:", error);
+    res.status(500).json({ message: "Failed to change role" });
+  }
+});
 
 module.exports = router;
