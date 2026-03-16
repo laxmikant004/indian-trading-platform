@@ -4,6 +4,7 @@ import Portfolio from "./Portfolio";
 import Trades from "./Trades";
 import Trade from "./Trade";
 import PendingOrders from "./PendingOrder";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("market");
@@ -11,6 +12,9 @@ const Dashboard = () => {
 
   const [market, setMarket] = useState([]);
   const [watchlist, setWatchlist] = useState([]);
+
+  const [executedOrders, setExecutedOrders] = useState([]);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   // 🔎 SEARCH STATES
   const [symbol, setSymbol] = useState("");
@@ -24,15 +28,18 @@ const Dashboard = () => {
   useEffect(() => {
     fetchMarket();
     fetchWatchlist();
+    checkExecutedOrders();
 
     const marketInterval = setInterval(fetchMarket, 15000);
     const watchlistInterval = setInterval(fetchWatchlist, 15000);
+    const orderInterval = setInterval(checkExecutedOrders, 5000);
 
     return () => {
       clearInterval(marketInterval);
       clearInterval(watchlistInterval);
+      clearInterval(orderInterval);
     };
-  }, []);
+  }, [executedOrders]);
 
   // ================= API =================
   const fetchMarket = async () => {
@@ -50,6 +57,30 @@ const Dashboard = () => {
       setWatchlist(res.data ?? []);
     } catch (err) {
       console.error("Watchlist fetch failed:", err);
+    }
+  };
+
+  const checkExecutedOrders = async () => {
+    try {
+      const res = await API.get("/orders");
+
+      const executed = res.data.filter(
+        (order) => order.status === "EXECUTED"
+      );
+
+      executed.forEach((order) => {
+        if (!firstLoad && !executedOrders.includes(order.id)) {
+          toast.success(
+            `Order Executed: ${order.quantity} ${order.symbol} @ ₹${order.price}`
+          );
+        }
+      });
+
+      setExecutedOrders(executed.map((o) => o.id));
+      setFirstLoad(false);
+
+    } catch (err) {
+      console.error("Order check failed:", err);
     }
   };
 
@@ -153,7 +184,7 @@ const Dashboard = () => {
       case "market":
         return (
           <>
-            {/* 🔎 SEARCH */}
+            {/* SEARCH */}
             <div style={{ position: "relative", width: "320px" }}>
               <input
                 value={symbol}
@@ -227,34 +258,11 @@ const Dashboard = () => {
               {error && <p style={{ color: "#ef4444" }}>{error}</p>}
             </div>
 
-            {/* SEARCH RESULT */}
-            {searchData && (
-              <div style={{ ...card, marginTop: "30px", width: "350px" }}>
-                <h3>{searchData.shortName || searchData.symbol}</h3>
-                <h1>₹ {searchData.price}</h1>
-                <p
-                  style={{
-                    color:
-                      searchData.change >= 0 ? "#22c55e" : "#ef4444",
-                  }}
-                >
-                  {searchData.change?.toFixed(2)}%
-                </p>
-
-                <button
-                  onClick={() => openTrade(searchData.symbol)}
-                  style={{ ...btnBlue, marginTop: "10px", width: "100%" }}
-                >
-                  Buy / Sell
-                </button>
-              </div>
-            )}
-
             {/* MARKET + WATCHLIST */}
             <div style={{ display: "flex", gap: "40px", marginTop: "50px" }}>
-              {/* MARKET */}
               <div style={{ ...card, flex: 3 }}>
                 <h3>📈 Market Overview</h3>
+
                 <table style={{ width: "100%", marginTop: "20px" }}>
                   <thead style={{ color: "#9ca3af" }}>
                     <tr>
@@ -264,6 +272,7 @@ const Dashboard = () => {
                       <th></th>
                     </tr>
                   </thead>
+
                   <tbody>
                     {market.map((item, i) => {
                       const isIndex = item.symbol?.startsWith("^");
@@ -274,6 +283,7 @@ const Dashboard = () => {
                           <td>
                             ₹ {Number(item.regularMarketPrice ?? 0).toFixed(2)}
                           </td>
+
                           <td
                             style={{
                               color:
@@ -289,6 +299,7 @@ const Dashboard = () => {
                             ).toFixed(2)}
                             %
                           </td>
+
                           <td>
                             {!isIndex && (
                               <>
@@ -353,6 +364,7 @@ const Dashboard = () => {
                       >
                         Buy/Sell
                       </button>
+
                       <button
                         onClick={() =>
                           handleRemoveWatchlist(s.symbol)
@@ -374,7 +386,7 @@ const Dashboard = () => {
 
       case "trades":
         return <Trades />;
-      
+
       case "pending":
         return <PendingOrders />;
 
@@ -400,7 +412,7 @@ const Dashboard = () => {
           background: "#111827",
         }}
       >
-        {["market", "portfolio", "trades","pending"].map((tab) => (
+        {["market", "portfolio", "trades", "pending"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -424,3 +436,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
