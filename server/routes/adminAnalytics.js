@@ -43,11 +43,13 @@ router.get("/analytics", async (req, res) => {
         ? Math.round(totalTrades / chartData.length)
         : 0;
 
-    /* ================= PREVIOUS PERIOD (FOR GROWTH) ================= */
+    /* ================= PREVIOUS PERIOD ================= */
 
     const previousResult = await pool.query(
       `
-      SELECT COUNT(*)::int as trades
+      SELECT 
+        COUNT(*)::int as trades,
+        COALESCE(SUM(total),0)::float as revenue
       FROM trades
       WHERE created_at >= CURRENT_DATE - INTERVAL '${range * 2} days'
       AND created_at < CURRENT_DATE - INTERVAL '${range} days'
@@ -55,19 +57,39 @@ router.get("/analytics", async (req, res) => {
     );
 
     const previousTrades = previousResult.rows[0]?.trades || 0;
+    const previousRevenue = previousResult.rows[0]?.revenue || 0;
+
+    /* ================= GROWTH CALCULATION ================= */
 
     let growth = 0;
-    if (previousTrades > 0) {
+    let revenueGrowth = 0;
+
+    // Trades growth
+    if (previousTrades === 0) {
+      growth = totalTrades > 0 ? 100 : 0;
+    } else {
       growth = Math.round(
         ((totalTrades - previousTrades) / previousTrades) * 100
       );
     }
+
+    // Revenue growth (optional)
+    if (previousRevenue === 0) {
+      revenueGrowth = totalRevenue > 0 ? 100 : 0;
+    } else {
+      revenueGrowth = Math.round(
+        ((totalRevenue - previousRevenue) / previousRevenue) * 100
+      );
+    }
+
+    /* ================= RESPONSE ================= */
 
     res.json({
       summary: {
         totalTrades,
         totalRevenue,
         growth,
+        revenueGrowth,
         avgTrades,
       },
       chartData,
